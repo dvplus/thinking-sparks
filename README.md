@@ -22,3 +22,9 @@ python3 -m http.server 8000
 ## Deploy
 
 Published with GitHub Pages from the `main` branch root.
+
+## Credits
+
+Made by Diogo · [diogovalerio.com](https://diogovalerio.com/) · [LinkedIn](https://www.linkedin.com/in/diogovalerio/)
+
+Each spark credits the research it's based on.

@@ -126,7 +126,14 @@ body.quizzing .nav { transform: translateY(140%); }
 .qactions { display: flex; gap: 10px; flex-wrap: wrap; }
 .score { margin: 0 0 12px; font-size: clamp(3.5rem, 18vw, 5rem); font-weight: 700; line-height: 1; letter-spacing: -0.04em; font-variation-settings: "opsz" 144; }
 
+/* About and credits */
+.btn.infobtn { position: absolute; right: 20px; top: 10px; z-index: 3; width: 36px; height: 36px; font-size: .85rem; font-style: italic; font-family: Georgia, serif; transition: opacity .3s var(--ease), border-radius .35s var(--spring), background .2s var(--ease), color .2s var(--ease), transform .35s var(--spring); }
+body.quizzing .infobtn { opacity: 0; pointer-events: none; }
+a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.about .credit { margin-top: 8px; }
+
 @media (prefers-reduced-motion: reduce) {
-  .btn, .indicator, .tab, .feed, .hint, .pager span, .nav, .count, .quizbtn { transition: none; }
+  .btn, .indicator, .tab, .feed, .hint, .pager span, .nav, .count, .quizbtn, .btn.infobtn { transition: none; }
   .qbody > * { animation: none; }
 }

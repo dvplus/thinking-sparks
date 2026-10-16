@@ -345,6 +345,24 @@ function showScore() {
 $("quizBtn").addEventListener("click", openQuiz);
 $("quizClose").addEventListener("click", closeQuiz);
 
+/* About and credits: same overlay language as the quiz, drawing goes quiet behind it */
+const aboutEl = $("about");
+function openAbout() {
+  quizTarget = 1;
+  document.body.classList.add("quizzing");
+  aboutEl.hidden = false;
+  aboutEl.scrollTop = 0;
+  $("aboutClose").focus({ preventScroll: true });
+}
+function closeAbout() {
+  quizTarget = 0;
+  document.body.classList.remove("quizzing");
+  aboutEl.hidden = true;
+  $("aboutBtn").focus({ preventScroll: true });
+}
+$("aboutBtn").addEventListener("click", openAbout);
+$("aboutClose").addEventListener("click", closeAbout);
+
 /* Scroll-linked text motion */
 let ticking = false;
 function update() {
@@ -375,6 +393,7 @@ feed.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestA
 addEventListener("resize", () => { placeIndicator(); sizeCanvas(); goTo(idx, true); update(); });
 
 document.addEventListener("keydown", e => {
+  if (!aboutEl.hidden) { if (e.key === "Escape") closeAbout(); return; }
   if (quiz) { if (e.key === "Escape") closeQuiz(); return; }
   const s = slides[idx];
   if (["ArrowDown", "PageDown", " "].includes(e.key)) { e.preventDefault(); goTo(Math.min(idx + 1, list.length - 1)); }
