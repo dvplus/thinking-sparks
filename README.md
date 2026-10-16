@@ -1,6 +1,6 @@
 # Thinking Sparks
 
-A swipeable deck of short, research-backed ideas for listening, disagreeing, giving feedback and spotting biases, with a quiz mode.
+How we think shapes how we talk, and the other way round. Short, research-backed sparks to think more clearly and talk more kindly. A swipeable deck of ideas, with examples and a quiz.
 
 Live at https://dvplus.github.io/thinking-sparks/
 
@@ -28,7 +28,7 @@ python3 -m http.server 8000
 
 ## Analytics
 
-Anonymous, cookieless stats with [Umami Cloud](https://umami.is) (only counted on `dvplus.github.io`, not locally). Events: `spark-view`, `sparks-seen`, `topic-filter`, `examples-open`, `quiz-start`, `quiz-finish` (with `early` when ended before the last question), `missed-spark-open`, `end-card`, `about-open`, `link-click`, `home-screen-launch`. Tracking lives in `track()` in `js/app.js`.
+Anonymous, cookieless stats with [Umami Cloud](https://umami.is) (only counted on `dvplus.github.io`, not locally). Events: `spark-view`, `sparks-seen`, `topic-filter`, `examples-open`, `quiz-start`, `quiz-finish` (with `early` when ended before the last question), `missed-spark-open`, `end-card`, `topics-open`, `about-open`, `link-click`, `home-screen-launch`. Tracking lives in `track()` in `js/app.js`.
 
 ## Deploy
 

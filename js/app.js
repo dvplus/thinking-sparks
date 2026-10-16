@@ -22,7 +22,7 @@ const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
 const smooth = t => t * t * (3 - 2 * t);
 
 const $ = id => document.getElementById(id);
-const feed = $("feed"), canvas = $("art"), count = $("count"), hint = $("hint");
+const feed = $("feed"), canvas = $("art"), count = $("count");
 const tabs = $("tabs"), indicator = $("indicator");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)");
 const dayIndex = Math.floor(Date.now() / 86400000);
@@ -45,25 +45,62 @@ if (matchMedia("(display-mode: standalone)").matches || navigator.standalone) tr
 
 let cat = "all", list = sparks, slides = [], idx = 0;
 
-/* Tabs */
-[["all", { tab: "Discover" }], ...Object.entries(CATS)].forEach(([key, c]) => {
-  const b = document.createElement("button");
-  b.className = "tab"; b.dataset.cat = key; b.textContent = c.tab;
-  b.addEventListener("pointerdown", () => tabs.classList.add("pressing"));
-  b.addEventListener("click", () => key !== cat && switchCat(key));
-  tabs.appendChild(b);
-});
-["pointerup", "pointercancel", "pointerleave"].forEach(ev => tabs.addEventListener(ev, () => tabs.classList.remove("pressing")));
-
-function placeIndicator() {
-  const active = tabs.querySelector(`.tab[data-cat="${cat}"]`);
-  indicator.style.width = active.offsetWidth + "px";
-  indicator.style.transform = `translateX(${active.offsetLeft}px)`;
-  tabs.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-pressed", t === active));
-}
-
 /* Slides */
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+/* Menu: Discover · Topics · Quiz. "Topics" turns the bar into a row of topic chips (like filters
+   in a music app); ✕ clears the filter and brings the main menu back. The row scrolls as topics grow. */
+const mainGroup = el("div", "mgroup");
+const discoverTab = el("button", "tab", "Discover");
+const topicsTab = el("button", "tab", "Topics");
+const quizTab = el("button", "tab", "Quiz"); quizTab.id = "quizBtn";
+mainGroup.append(discoverTab, topicsTab, quizTab);
+
+const topicGroup = el("div", "tgroup"); topicGroup.setAttribute("role", "group"); topicGroup.setAttribute("aria-label", "Topics");
+const clearBtn = el("button", "tclose", "✕"); clearBtn.setAttribute("aria-label", "Close topics, show all sparks");
+const topicRow = el("div", "trow");
+const topicInd = el("span", "tind");
+topicRow.append(topicInd);
+const chips = Object.entries(CATS).map(([key, c]) => {
+  const b = el("button", "tchip"); b.dataset.cat = key;
+  const d = el("span", "dot"); d.style.background = c.color;
+  b.append(d, c.label);
+  b.addEventListener("click", () => { if (key !== cat) switchCat(key); });
+  topicRow.append(b);
+  return b;
+});
+topicGroup.append(clearBtn, topicRow);
+tabs.append(mainGroup, topicGroup);
+
+let topicMode = false;
+function setTopicMode(on) {
+  topicMode = on;
+  tabs.classList.toggle("topicmode", on);
+  topicsTab.setAttribute("aria-expanded", on);
+  if (on) { track("topics-open"); (chips.find(c => c.dataset.cat === cat) || chips[0]).focus({ preventScroll: true }); }
+  else topicsTab.focus({ preventScroll: true });
+  placeIndicator();
+}
+[discoverTab, topicsTab].forEach(b => b.addEventListener("pointerdown", () => tabs.classList.add("pressing")));
+["pointerup", "pointercancel", "pointerleave"].forEach(ev => tabs.addEventListener(ev, () => tabs.classList.remove("pressing")));
+discoverTab.addEventListener("click", () => cat !== "all" && switchCat("all"));
+topicsTab.addEventListener("click", () => setTopicMode(true));
+clearBtn.addEventListener("click", () => { if (cat !== "all") switchCat("all"); setTopicMode(false); });
+
+function placeIndicator() {
+  discoverTab.setAttribute("aria-pressed", cat === "all");
+  const chip = chips.find(c => c.dataset.cat === cat);
+  chips.forEach(c => c.setAttribute("aria-pressed", c === chip));
+  // main menu indicator always rests on Discover; the topic row has its own that slides between chips
+  indicator.style.width = discoverTab.offsetWidth + "px";
+  indicator.style.transform = `translateX(${discoverTab.offsetLeft}px)`;
+  topicInd.classList.toggle("on", !!chip);
+  if (chip) {
+    topicInd.style.width = chip.offsetWidth + "px";
+    topicInd.style.transform = `translateX(${chip.offsetLeft}px)`;
+    if (topicMode) chip.scrollIntoView({ inline: "nearest", block: "nearest", behavior: reduce.matches ? "instant" : "smooth" });
+  }
+}
 
 function build() {
   feed.innerHTML = "";
@@ -100,14 +137,11 @@ function build() {
     });
     const markAhead = p => pages.forEach((pg, k) => pg.classList.toggle("ahead", k > p));
     markAhead(0);
-    const swipeHint = el("em", null, "Swipe for examples");
-    pager.append(swipeHint);
     let sawExamples = false;
     h.addEventListener("scroll", () => {
       const p = Math.round(h.scrollLeft / pageWidth(h));
       dots.forEach((dt, k) => { dt.classList.toggle("on", k === p); dt.setAttribute("aria-current", k === p); });
       markAhead(p);
-      swipeHint.style.opacity = p ? 0 : 1;
       if (p && !sawExamples) { sawExamples = true; track("examples-open", { spark: s.title, topic: s.cat }); }
     }, { passive: true });
 
@@ -463,7 +497,6 @@ function update() {
     idx = now;
     try { localStorage.setItem("spark5", JSON.stringify({ day: dayIndex, cat, i: idx })); } catch (e) {}
   }
-  if (pos > 0.2) hint.classList.add("gone");
   // count a spark once it has settled on screen, once per visit
   const s = list[now];
   if (s && Math.abs(pos - now) < 0.05 && !seenSparks.has(s.title)) {
@@ -477,6 +510,8 @@ feed.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestA
 addEventListener("resize", () => { placeIndicator(); sizeCanvas(); goTo(idx, true); update(); });
 
 document.addEventListener("keydown", e => {
+  if (!introDone) { if ([" ", "Enter", "ArrowDown", "PageDown", "Escape"].includes(e.key)) { e.preventDefault(); dismissIntro(); } return; }
+  if (topicMode && e.key === "Escape") { clearBtn.click(); return; }
   if (aboutEl && !aboutEl.hidden) { if (e.key === "Escape") closeAbout(); return; }
   if (quiz) { if (e.key === "Escape") closeQuiz(); return; }
   const at = Math.round(feed.scrollTop / (feed.clientHeight || 1));  // includes the end card
@@ -493,7 +528,40 @@ for (let k = sparks.length - 1; k > 0; k--) {
   [sparks[k], sparks[j]] = [sparks[j], sparks[k]];
 }
 const start = 0;
+/* Intro: the full welcome on a first visit, just the title after that. The drawing cycles behind it. */
+const introEl = $("intro");
+let introDone = false;
+function dismissIntro() {
+  if (introDone) return;
+  introDone = true;
+  try { localStorage.setItem("ts-intro", "1"); } catch (e) {}
+  quizTarget = 0;
+  document.body.classList.remove("introing");
+  introEl.classList.add("gone");
+  setTimeout(() => { if (introDone) { introEl.hidden = true; introEl.classList.remove("gone", "brief"); } }, reduce.matches ? 0 : 600);
+}
+function showIntro(brief) {
+  introDone = false;
+  introEl.hidden = false;
+  introEl.classList.remove("gone");
+  introEl.classList.toggle("brief", !!brief);
+  document.body.classList.add("introing");
+  quizTarget = 1;
+  if (brief) setTimeout(dismissIntro, reduce.matches ? 400 : 1300);
+  else $("introGo").focus({ preventScroll: true });
+}
+introEl.addEventListener("click", dismissIntro);
+let touchY = null;
+introEl.addEventListener("touchstart", e => { touchY = e.touches[0].clientY; }, { passive: true });
+introEl.addEventListener("touchend", e => { if (touchY != null && touchY - e.changedTouches[0].clientY > 30) dismissIntro(); touchY = null; });
+introEl.addEventListener("wheel", e => { if (e.deltaY > 8) dismissIntro(); }, { passive: true });
+if (aboutEl) $("replayIntro").addEventListener("click", () => { closeAbout(); showIntro(false); });
+
 build();
+let seenIntro = false;
+try { seenIntro = localStorage.getItem("ts-intro") === "1"; } catch (e) {}
+quizAmt = 1;  // start on the quiet, cycling drawing
+showIntro(seenIntro);
 idx = start;
 sizeCanvas();
 requestAnimationFrame(() => { goTo(start, true); update(); snapPens(); requestAnimationFrame(loop); });

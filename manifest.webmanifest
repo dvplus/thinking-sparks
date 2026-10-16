@@ -1,7 +1,7 @@
 {
   "name": "Thinking Sparks",
   "short_name": "Sparks",
-  "description": "Small, research-backed ideas for listening well, disagreeing better, giving feedback and catching your own biases.",
+  "description": "How we think shapes how we talk, and the other way round. Short, research-backed sparks to think more clearly and talk more kindly.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

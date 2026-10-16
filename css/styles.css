@@ -57,7 +57,7 @@ body {
   font-variation-settings: "opsz" 144;
 }
 .desc { margin: 0 0 8px; font-size: 1rem; line-height: 1.5; color: var(--muted); max-width: 38ch; text-wrap: pretty; }
-.source { margin: 0; font-size: .8125rem; line-height: 1.4; color: var(--faint); }
+.source { margin: 0 0 -5px; font-size: .8125rem; line-height: 1.4; color: var(--faint); } /* optical: last baseline sits on the example card's bottom edge */
 .actions { display: flex; gap: 10px; }
 
 .ex { border: 1.5px solid var(--line); border-radius: 28px; padding: 20px 20px 22px; }
@@ -66,7 +66,7 @@ body {
 .q.dim { font-size: 1rem; color: var(--faint); text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: rgba(244,244,242,.35); }
 .rule { height: 1.5px; background: var(--line); opacity: .15; margin: 16px 0 14px; border: 0; }
 
-.pager { display: flex; align-items: center; gap: 6px; padding: 16px 28px 0; }
+.pager { display: flex; align-items: center; gap: 6px; padding: 18px 28px 0; } /* same gap below the idea and the examples */
 .pager .pdot { position: relative; flex: none; width: 7px; height: 7px; padding: 0; border-radius: 99px; border: 1.5px solid var(--line); background: transparent; cursor: pointer; transition: width .45s var(--spring), background .2s var(--ease); }
 .pager .pdot.on { width: 22px; background: var(--ink); }
 .pager .pdot::after { content: ""; position: absolute; inset: -18px -3px; } /* 43px tall tap area, no overlap */
@@ -74,7 +74,6 @@ body {
 .slide.end { padding-bottom: 120px; }
 .endcard { padding: 0 28px; max-width: 536px; }
 .endcard .desc { margin-bottom: 24px; }
-.pager em { margin-left: 8px; font-style: normal; font-size: .75rem; color: var(--faint); transition: opacity .3s var(--ease); }
 
 /* Shared button language */
 .btn {
@@ -87,29 +86,64 @@ body {
 .btn:active { border-radius: 14px; transform: scale(.97); background: var(--ink); color: var(--bg); }
 
 .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; padding: 0 16px calc(14px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: center; pointer-events: none; }
-.tabs { pointer-events: auto; position: relative; display: flex; width: 100%; max-width: 440px; padding: 4px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--bg); }
+.tabs { pointer-events: auto; position: relative; display: flex; width: 100%; max-width: 320px; padding: 4px; border-radius: 999px; border: 1.5px solid rgba(244, 244, 242, .55); background: var(--bg); }
 .indicator { position: absolute; top: 4px; bottom: 4px; left: 0; border-radius: 999px; background: var(--ink); transition: transform .5s var(--spring), width .5s var(--spring), border-radius .35s var(--spring); }
 .tabs.pressing .indicator { border-radius: 14px; }
 .tab { position: relative; z-index: 1; flex: 1; min-width: 0; height: 40px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: .8125rem; font-weight: 600; cursor: pointer; transition: color .25s var(--ease); }
 .tab[aria-pressed="true"] { color: var(--bg); }
 
-.hint { position: absolute; left: 28px; top: 42px; z-index: 3; margin: 0; font-size: .8125rem; color: var(--faint); pointer-events: none; transition: opacity .4s var(--ease); }
-.hint.gone { opacity: 0; }
 button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
 /* Quiz */
-.btn.quizbtn { pointer-events: auto; flex: none; width: 51px; height: 51px; padding: 0; font-size: .8125rem; background: var(--bg); }
-.nav { gap: 6px; padding-left: 12px; padding-right: 12px; }
-/* tabs size to their label, so long words like "Feedback" get the room they need */
-.tab { flex: 1 1 auto; padding: 0 6px; white-space: nowrap; font-stretch: 94%; }
-@media (max-width: 440px) {
-  .nav { gap: 5px; padding-left: 10px; padding-right: 10px; }
-  .tab { padding: 0 4px; font-stretch: 84%; letter-spacing: .005em; }
-}
-.count, .quizbtn { transition: opacity .3s var(--ease); }
+/* Menu: main group (Discover · Topics · Quiz) or topic group (✕ + scrolling chips) */
+.tabs { overflow: hidden; transition: max-width .5s var(--spring); }
+.tabs.topicmode { max-width: 440px; }
+.mgroup, .tgroup { display: flex; flex: 1 1 auto; min-width: 0; }
+.tgroup { display: none; }
+.tabs.topicmode .mgroup { display: none; }
+.tabs.topicmode .tgroup { display: flex; animation: slidein .4s var(--ease) both; }
+.tabs:not(.topicmode) .mgroup { animation: slidein-back .4s var(--ease) both; }
+.tabs.topicmode .indicator { opacity: 0; }
+@keyframes slidein { from { opacity: 0; transform: translateX(24px); } }
+@keyframes slidein-back { from { opacity: 0; transform: translateX(-24px); } }
+.tab { flex: 1 1 auto; padding: 0 14px; white-space: nowrap; font-stretch: 94%; }
+.tclose { flex: none; width: 40px; height: 40px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: inherit; font-size: .8125rem; cursor: pointer; }
+.trow { position: relative; display: flex; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; scroll-padding: 0 8px; }
+.trow::-webkit-scrollbar { display: none; }
+/* soft fade on the right edge says "there's more"; the spacer lets the last chip scroll clear of it */
+.trow { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+.trow::after { content: ""; flex: 0 0 20px; }
+.tind { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; background: var(--ink); opacity: 0; transition: transform .5s var(--spring), width .5s var(--spring), opacity .2s var(--ease); }
+.tind.on { opacity: 1; }
+.tchip { position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: inherit; font-size: .8125rem; font-weight: 600; font-stretch: 94%; white-space: nowrap; cursor: pointer; transition: color .25s var(--ease); }
+.tchip .dot { width: 8px; height: 8px; margin-right: 7px; vertical-align: 0; }
+.tchip[aria-pressed="true"] { color: var(--bg); }
+.count { transition: opacity .3s var(--ease); }
 .nav { transition: transform .45s var(--ease); }
-body.quizzing .feed, body.quizzing .count, body.quizzing .hint, body.quizzing .quizbtn { opacity: 0; pointer-events: none; }
+body.quizzing .feed, body.quizzing .count { opacity: 0; pointer-events: none; }
 body.quizzing .nav { transform: translateY(140%); }
+
+/* Intro */
+.intro { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding: 0 28px calc(56px + env(safe-area-inset-bottom, 0px)); cursor: pointer; transition: opacity .5s var(--ease); }
+.intro[hidden] { display: none; }
+.intro.gone { opacity: 0; pointer-events: none; }
+.ibody { max-width: 480px; }
+.ibody > * { animation: rise .6s var(--ease) both; }
+.ibody > :nth-child(2) { animation-delay: .12s; }
+.ibody > :nth-child(3) { animation-delay: .24s; }
+.ibody > :nth-child(4) { animation-delay: .36s; }
+.ititle { margin: 0 0 16px; font-weight: 700; font-size: clamp(2.5rem, 11vw, 3.5rem); line-height: 1; letter-spacing: -0.03em; text-wrap: balance; font-variation-settings: "opsz" 144; }
+.ilead { margin: 0 auto 20px; max-width: 32ch; font-size: 1.125rem; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
+.igesture { display: grid; justify-content: center; gap: 6px; margin: 0 0 28px; font-size: .875rem; line-height: 1.4; color: var(--faint); }
+.igesture span { display: flex; align-items: center; gap: 10px; }
+.igesture b { width: 1.25em; font-size: 1.05rem; font-weight: 400; color: var(--muted); text-align: center; }
+.intro.brief { cursor: default; }
+.intro.brief .ilead, .intro.brief .igesture, .intro.brief .btn { display: none; }
+.intro.brief .ititle { margin: 0; }
+body.introing .feed, body.introing .count, body.introing .infobtn { opacity: 0; pointer-events: none; }
+body.introing .nav { transform: translateY(140%); }
+.areplay { margin: 4px 0 0; }
+.areplay .linkbtn { padding: 0; min-height: 36px; }
 .quiz { position: absolute; inset: 0; z-index: 6; display: flex; flex-direction: column; padding: 64px 28px 28px; overflow-y: auto; scrollbar-width: none; }
 .quiz[hidden] { display: none; }
 .qtop { position: absolute; left: 28px; right: 20px; top: 10px; display: flex; align-items: center; justify-content: space-between; }
@@ -181,7 +215,9 @@ body.abouting .stage { opacity: 0; }
 @media (display-mode: standalone) { .ahome { display: none; } } /* already installed */
 
 @media (prefers-reduced-motion: reduce) {
-  .btn, .indicator, .tab, .feed, .hint, .pager .pdot, .nav, .count, .quizbtn, .btn.infobtn { transition: none; }
+  .btn, .indicator, .tab, .feed, .pager .pdot, .nav, .count, .btn.infobtn, .intro, .tabs, .tind, .tchip { transition: none; }
+  .tgroup, .mgroup { animation: none !important; }
+  .ibody > * { animation: none; }
   .qbody > *, .abody > * { animation: none; }
   .stage { transition: none; }
 }

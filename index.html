@@ -15,22 +15,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=14">
-<script src="js/content.js?v=14" defer></script>
-<script src="js/app.js?v=14" defer></script>
+<link rel="stylesheet" href="css/styles.css?v=16">
+<script src="js/content.js?v=16" defer></script>
+<script src="js/app.js?v=16" defer></script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="76c79edc-e9f0-48e6-a8e2-d1383f0cc581" data-domains="dvplus.github.io"></script>
 </head>
-<body>
+<body class="introing">
   <div class="stage" aria-hidden="true"><canvas id="art"></canvas></div>
+  <section class="intro" id="intro" aria-labelledby="introTitle">
+    <div class="ibody">
+      <h1 class="ititle" id="introTitle">Thinking Sparks</h1>
+      <p class="ilead">How we think shapes how we talk, and the other way round. Short, research-backed sparks to think more clearly and talk more kindly.</p>
+      <p class="igesture"><span><b aria-hidden="true">⇅</b>Swipe up for the next spark</span><span><b aria-hidden="true">⇄</b>Swipe sideways to see it in action</span></p>
+      <button class="btn solid" id="introGo">Start</button>
+    </div>
+  </section>
   <p class="count" id="count" aria-live="polite"></p>
-  <p class="hint" id="hint">Swipe up for more</p>
   <button class="btn round infobtn" id="aboutBtn" aria-label="About and credits">i</button>
   <section class="about" id="about" aria-labelledby="aboutTitle" hidden>
     <div class="qtop"><p class="qprog">About</p><button class="btn round" id="aboutClose" aria-label="Close about">✕</button></div>
     <div class="abody">
       <p class="adots" aria-hidden="true"><span style="background:#9fd3b4"></span><span style="background:#c3b3f2"></span><span style="background:#ff8a3d"></span><span style="background:#f2c94c"></span></p>
       <h2 class="atitle" id="aboutTitle">Thinking Sparks</h2>
-      <p class="desc">Small, research-backed ideas for listening well, disagreeing better, giving feedback and catching your own biases.</p>
+      <p class="desc">How we think shapes how we talk, and the other way round. Short, research-backed sparks to think more clearly and talk more kindly.</p>
+      <p class="areplay"><button class="linkbtn" id="replayIntro">Replay the intro</button></p>
       <dl class="credits">
         <div><dt>Made by</dt><dd>Diogo Valério</dd></div>
         <div><dt>Inspired by</dt><dd>The illustrations of <a href="https://www.instagram.com/gaiaesthermaria/" data-umami-event="link-click" data-umami-event-to="gaia-instagram" target="_blank" rel="noopener">Gaia Alari</a></dd></div>
@@ -47,6 +55,7 @@
     <div class="qbody" id="qbody" aria-live="polite"></div>
   </section>
   <main class="feed" id="feed" aria-label="Sparks"></main>
-  <nav class="nav"><div class="tabs" id="tabs" role="group" aria-label="Filter by topic"><span class="indicator" id="indicator"></span></div><button class="btn quizbtn" id="quizBtn">Quiz</button></nav>
+  <nav class="nav"><div class="tabs" id="tabs" role="group" aria-label="Browse"><span class="indicator" id="indicator"></span></div></nav>
+
 </body>
 </html>
