@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#121212">
+<title>Clear Thinking Spark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/content.js" defer></script>
+<script src="js/app.js" defer></script>
+</head>
+<body>
+  <div class="stage" aria-hidden="true"><canvas id="art"></canvas></div>
+  <p class="count" id="count" aria-live="polite"></p>
+  <p class="hint" id="hint">Swipe up for more</p>
+  <section class="quiz" id="quiz" aria-label="Quiz" hidden>
+    <div class="qtop"><p class="qprog" id="qprog" aria-live="polite"></p><button class="btn round" id="quizClose" aria-label="Close quiz">✕</button></div>
+    <div class="qbody" id="qbody" aria-live="polite"></div>
+  </section>
+  <main class="feed" id="feed" aria-label="Sparks"></main>
+  <nav class="nav"><div class="tabs" id="tabs" role="group" aria-label="Filter by topic"><span class="indicator" id="indicator"></span></div><button class="btn quizbtn" id="quizBtn">Quiz</button></nav>
+</body>
+</html>
