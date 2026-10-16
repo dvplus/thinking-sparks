@@ -154,14 +154,14 @@ body.abouting .stage { opacity: 0; }
 .adots { display: flex; gap: 6px; margin: 0 0 18px; }
 .adots span { width: 10px; height: 10px; border-radius: 50%; }
 .atitle { margin: 0 0 10px; font-weight: 700; font-size: clamp(1.75rem, 7vw, 2.25rem); line-height: 1.06; letter-spacing: -0.025em; text-wrap: balance; font-variation-settings: "opsz" 144; }
-.credits { margin: 28px 0 36px; border-top: 1.5px solid rgba(244, 244, 242, .15); }
+.credits { margin: 28px 0 0; border-top: 1.5px solid rgba(244, 244, 242, .15); }
 .credits > div { display: grid; grid-template-columns: 92px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1.5px solid rgba(244, 244, 242, .15); }
 .credits dt { padding-top: 2px; font-size: .8125rem; font-weight: 600; color: var(--faint); }
 .credits dd { margin: 0; font-size: 1rem; line-height: 1.45; text-wrap: pretty; }
 .credits a { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(244, 244, 242, .4); transition: text-decoration-color .15s var(--ease); }
 .credits a:hover { text-decoration-color: var(--ink); }
-.abody .qactions { gap: 8px; }
-.abody .qactions .btn { padding: 0 16px; }
+.credits .alinks { display: flex; flex-wrap: wrap; gap: 12px 14px; }
+.credits .alinks a { padding: 10px 0; margin: -10px 0; } /* taller tap target, same layout */
 
 @media (prefers-reduced-motion: reduce) {
   .btn, .indicator, .tab, .feed, .hint, .pager span, .nav, .count, .quizbtn, .btn.infobtn { transition: none; }
