@@ -139,9 +139,32 @@ body.quizzing .nav { transform: translateY(140%); }
 body.quizzing .infobtn { opacity: 0; pointer-events: none; }
 a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-.about .credit { margin-top: 8px; }
+
+/* Credits page: a top-aligned colophon, unlike the bottom-anchored sparks and quiz */
+.stage { transition: opacity .3s var(--ease); }
+body.abouting .stage { opacity: 0; }
+.about { position: absolute; inset: 0; z-index: 6; overflow-y: auto; scrollbar-width: none; padding: 76px 28px calc(32px + env(safe-area-inset-bottom, 0px)); }
+.about[hidden] { display: none; }
+.abody { max-width: 480px; }
+.abody > * { animation: rise .45s var(--ease) both; }
+.abody > :nth-child(2) { animation-delay: .04s; }
+.abody > :nth-child(3) { animation-delay: .08s; }
+.abody > :nth-child(4) { animation-delay: .12s; }
+.abody > :nth-child(n+5) { animation-delay: .16s; }
+.adots { display: flex; gap: 6px; margin: 0 0 18px; }
+.adots span { width: 10px; height: 10px; border-radius: 50%; }
+.atitle { margin: 0 0 10px; font-weight: 700; font-size: clamp(1.75rem, 7vw, 2.25rem); line-height: 1.06; letter-spacing: -0.025em; text-wrap: balance; font-variation-settings: "opsz" 144; }
+.credits { margin: 28px 0 36px; border-top: 1.5px solid rgba(244, 244, 242, .15); }
+.credits > div { display: grid; grid-template-columns: 92px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1.5px solid rgba(244, 244, 242, .15); }
+.credits dt { padding-top: 2px; font-size: .8125rem; font-weight: 600; color: var(--faint); }
+.credits dd { margin: 0; font-size: 1rem; line-height: 1.45; text-wrap: pretty; }
+.credits a { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(244, 244, 242, .4); transition: text-decoration-color .15s var(--ease); }
+.credits a:hover { text-decoration-color: var(--ink); }
+.abody .qactions { gap: 8px; }
+.abody .qactions .btn { padding: 0 16px; }
 
 @media (prefers-reduced-motion: reduce) {
   .btn, .indicator, .tab, .feed, .hint, .pager span, .nav, .count, .quizbtn, .btn.infobtn { transition: none; }
-  .qbody > * { animation: none; }
+  .qbody > *, .abody > * { animation: none; }
+  .stage { transition: none; }
 }

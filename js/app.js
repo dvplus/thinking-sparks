@@ -345,18 +345,16 @@ function showScore() {
 $("quizBtn").addEventListener("click", openQuiz);
 $("quizClose").addEventListener("click", closeQuiz);
 
-/* About and credits: same overlay language as the quiz, drawing goes quiet behind it */
+/* About and credits: its own top-aligned page; the drawing steps aside */
 const aboutEl = $("about");
 function openAbout() {
-  quizTarget = 1;
-  document.body.classList.add("quizzing");
+  document.body.classList.add("quizzing", "abouting");
   aboutEl.hidden = false;
   aboutEl.scrollTop = 0;
   $("aboutClose").focus({ preventScroll: true });
 }
 function closeAbout() {
-  quizTarget = 0;
-  document.body.classList.remove("quizzing");
+  document.body.classList.remove("quizzing", "abouting");
   aboutEl.hidden = true;
   $("aboutBtn").focus({ preventScroll: true });
 }

@@ -31,6 +31,8 @@ When you change CSS or JS, bump the `?v=` number on the links in `index.html` so
 
 ## Credits
 
-Made by Diogo Valério · [diogovalerio.com](https://diogovalerio.com/) · [LinkedIn](https://www.linkedin.com/in/diogovalerio/)
+Made by Diogo Valério · [diogovalerio.com](https://diogovalerio.com/) · [LinkedIn](https://www.linkedin.com/in/diogovalerio/) · [Instagram](https://www.instagram.com/dvplus/)
+
+Inspired by the illustrations of [Gaia Alari](https://www.instagram.com/gaiaesthermaria/). Built with a little help from Claude.
 
 Each spark credits the research it's based on.
