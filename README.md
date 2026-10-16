@@ -26,6 +26,10 @@ python3 -m http.server 8000
 
 `.claude/skills/make-interfaces-feel-better/` is [Make Interfaces Feel Better](https://github.com/jakubkrehel/make-interfaces-feel-better) by Jakub Krehel (MIT), copied unmodified from commit `35545ea`. Claude Code picks it up automatically when working in this folder.
 
+## Analytics
+
+Anonymous, cookieless stats with [Umami Cloud](https://umami.is) (only counted on `dvplus.github.io`, not locally). Events: `spark-view`, `sparks-seen`, `topic-filter`, `examples-open`, `quiz-start`, `quiz-finish`, `about-open`, `link-click`, `home-screen-launch`. Tracking lives in `track()` in `js/app.js`.
+
 ## Deploy
 
 Published with GitHub Pages from the `main` branch root.

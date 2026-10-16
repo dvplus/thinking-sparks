@@ -27,6 +27,22 @@ const tabs = $("tabs"), indicator = $("indicator");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)");
 const dayIndex = Math.floor(Date.now() / 86400000);
 
+/* Anonymous usage stats (Umami, no cookies). Never let tracking break the app. */
+// Umami loads after this script, so early events wait in a queue for up to ~10s
+const pending = [];
+const send = (name, data) => { try { umami.track(name, data); } catch (e) {} };
+const flush = (tries = 0) => setTimeout(() => {
+  if (window.umami) pending.splice(0).forEach(([n, d]) => send(n, d));
+  else if (tries < 20) flush(tries + 1);
+}, 500);
+const track = (name, data) => {
+  if (window.umami) return send(name, data);
+  if (pending.push([name, data]) === 1) flush();
+};
+const seenSparks = new Set();
+const DEPTHS = [5, 10, 20];
+if (matchMedia("(display-mode: standalone)").matches || navigator.standalone) track("home-screen-launch");
+
 let cat = "all", list = sparks, slides = [], idx = 0;
 
 /* Tabs */
@@ -83,10 +99,12 @@ function build() {
     const dots = [0, 1, 2].map(k => { const sp = el("span"); if (!k) sp.className = "on"; pager.append(sp); return sp; });
     const swipeHint = el("em", null, "Swipe for examples");
     pager.append(swipeHint);
+    let sawExamples = false;
     h.addEventListener("scroll", () => {
       const p = Math.round(h.scrollLeft / pageWidth(h));
       dots.forEach((dt, k) => dt.classList.toggle("on", k === p));
       swipeHint.style.opacity = p ? 0 : 1;
+      if (p && !sawExamples) { sawExamples = true; track("examples-open", { spark: s.title, topic: s.cat }); }
     }, { passive: true });
 
     slide.append(h, pager);
@@ -105,6 +123,7 @@ function goTo(n, instant) {
 
 function switchCat(key) {
   cat = key;
+  track("topic-filter", { topic: key });
   placeIndicator();
   feed.classList.add("fading");
   setTimeout(() => {
@@ -268,6 +287,7 @@ function morphTo(c) {
 function openQuiz() {
   const here = list[idx] ? list[idx].cat : "listen";
   quiz = { qs: makeQuestions(), i: 0, score: 0, from: here, to: here, mix: 1 };
+  track("quiz-start", { topic: cat });
   quizTarget = 1;
   document.body.classList.add("quizzing");
   quizEl.hidden = false;
@@ -325,6 +345,7 @@ function answer(q, choice, btn, opts) {
 
 function showScore() {
   const n = quiz.score, total = quiz.qs.length;
+  track("quiz-finish", { topic: cat, score: n, total });
   spinTarget += Math.PI * (n / total) * 2;
   qprog.textContent = "";
   qbody.innerHTML = "";
@@ -348,6 +369,7 @@ $("quizClose").addEventListener("click", closeQuiz);
 /* About and credits: its own top-aligned page; the drawing steps aside */
 const aboutEl = $("about");
 function openAbout() {
+  track("about-open");
   document.body.classList.add("quizzing", "abouting");
   aboutEl.hidden = false;
   aboutEl.scrollTop = 0;
@@ -389,6 +411,14 @@ function update() {
     try { localStorage.setItem("spark5", JSON.stringify({ day: dayIndex, cat, i: idx })); } catch (e) {}
   }
   if (pos > 0.2) hint.classList.add("gone");
+  // count a spark once it has settled on screen, once per visit
+  const s = list[now];
+  if (s && Math.abs(pos - now) < 0.05 && !seenSparks.has(s.title)) {
+    seenSparks.add(s.title);
+    track("spark-view", { spark: s.title, topic: s.cat });
+    const n = seenSparks.size;
+    if (DEPTHS.includes(n) || n === sparks.length) track("sparks-seen", { count: n === sparks.length ? "all" : n });
+  }
 }
 feed.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
 addEventListener("resize", () => { placeIndicator(); sizeCanvas(); goTo(idx, true); update(); });
