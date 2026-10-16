@@ -91,13 +91,15 @@ function placeIndicator() {
   discoverTab.setAttribute("aria-pressed", cat === "all");
   const chip = chips.find(c => c.dataset.cat === cat);
   chips.forEach(c => c.setAttribute("aria-pressed", c === chip));
+  // measure from the rendered boxes: offsetLeft can be relative to the wrong parent while groups animate
+  const leftIn = (node, box) => node.getBoundingClientRect().left - box.getBoundingClientRect().left - box.clientLeft + box.scrollLeft;
   // main menu indicator always rests on Discover; the topic row has its own that slides between chips
   indicator.style.width = discoverTab.offsetWidth + "px";
-  indicator.style.transform = `translateX(${discoverTab.offsetLeft}px)`;
+  indicator.style.transform = `translateX(${leftIn(discoverTab, tabs)}px)`;
   topicInd.classList.toggle("on", !!chip);
   if (chip) {
     topicInd.style.width = chip.offsetWidth + "px";
-    topicInd.style.transform = `translateX(${chip.offsetLeft}px)`;
+    topicInd.style.transform = `translateX(${leftIn(chip, topicRow)}px)`;
     if (topicMode) chip.scrollIntoView({ inline: "nearest", block: "nearest", behavior: reduce.matches ? "instant" : "smooth" });
   }
 }

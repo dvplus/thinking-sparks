@@ -42,7 +42,7 @@ body {
 
 /* Horizontal pages inside each slide: the idea, then examples. The next card peeks in. */
 .hscroll {
-  display: flex; align-items: flex-end; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain;
+  display: flex; align-items: flex-end; gap: 12px; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory; padding: 0 28px; scroll-padding: 0 28px; scrollbar-width: none;
 }
 .hscroll::-webkit-scrollbar { display: none; }
@@ -57,7 +57,9 @@ body {
   font-variation-settings: "opsz" 144;
 }
 .desc { margin: 0 0 8px; font-size: 1rem; line-height: 1.5; color: var(--muted); max-width: 38ch; text-wrap: pretty; }
-.source { margin: 0 0 -5px; font-size: .8125rem; line-height: 1.4; color: var(--faint); } /* optical: last baseline sits on the example card's bottom edge */
+.source { margin: 0; font-size: .8125rem; line-height: 1.4; color: var(--faint); }
+/* optical: lift the example cards so their bottom edge meets the idea's last baseline (no overflow, nothing to drag) */
+.hscroll .page + .page { margin-bottom: 5px; }
 .actions { display: flex; gap: 10px; }
 
 .ex { border: 1.5px solid var(--line); border-radius: 28px; padding: 20px 20px 22px; }
@@ -105,7 +107,7 @@ button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .tabs:not(.topicmode) .mgroup { animation: slidein-back .4s var(--ease) both; }
 .tabs.topicmode .indicator { opacity: 0; }
 @keyframes slidein { from { opacity: 0; transform: translateX(24px); } }
-@keyframes slidein-back { from { opacity: 0; transform: translateX(-24px); } }
+@keyframes slidein-back { from { opacity: 0; } } /* fade only: the Discover indicator is measured against this group */
 .tab { flex: 1 1 auto; padding: 0 14px; white-space: nowrap; font-stretch: 94%; }
 .tclose { flex: none; width: 40px; height: 40px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: inherit; font-size: .8125rem; cursor: pointer; }
 .trow { position: relative; display: flex; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; scroll-padding: 0 8px; }
