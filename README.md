@@ -10,6 +10,7 @@ A swipeable deck of short, research-backed ideas for listening, disagreeing, giv
 | `css/styles.css` | All styles |
 | `js/content.js` | Content: topics (`CATS`) and sparks (`sparks`). Edit this to add or change sparks. |
 | `js/app.js` | Behavior: feed, drawing, quiz |
+| `manifest.webmanifest`, `icons/` | Home Screen name ("Spark") and app icons, drawn in the same pen style as the in-app illustration |
 
 ## Run locally
 

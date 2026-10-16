@@ -162,6 +162,7 @@ body.abouting .stage { opacity: 0; }
 .credits a:hover { text-decoration-color: var(--ink); }
 .credits .alinks { display: flex; flex-wrap: wrap; gap: 12px 14px; }
 .credits .alinks a { padding: 10px 0; margin: -10px 0; } /* taller tap target, same layout */
+@media (display-mode: standalone) { .ahome { display: none; } } /* already installed */
 
 @media (prefers-reduced-motion: reduce) {
   .btn, .indicator, .tab, .feed, .hint, .pager span, .nav, .count, .quizbtn, .btn.infobtn { transition: none; }
