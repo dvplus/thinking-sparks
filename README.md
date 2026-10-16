@@ -21,7 +21,7 @@ python3 -m http.server 8000
 
 ## Agent skill
 
-`.claude/skills/make-interfaces-feel-better/` is an interface-polish skill (from [dvplus/make-interfaces-feel-better](https://github.com/dvplus/make-interfaces-feel-better), MIT, by Jakub Krehel). Claude Code picks it up automatically when working in this folder.
+`.claude/skills/make-interfaces-feel-better/` is [Make Interfaces Feel Better](https://github.com/jakubkrehel/make-interfaces-feel-better) by Jakub Krehel (MIT), copied unmodified from commit `35545ea`. Claude Code picks it up automatically when working in this folder.
 
 ## Deploy
 
