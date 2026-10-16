@@ -28,7 +28,7 @@ python3 -m http.server 8000
 
 ## Analytics
 
-Anonymous, cookieless stats with [Umami Cloud](https://umami.is) (only counted on `dvplus.github.io`, not locally). Events: `spark-view`, `sparks-seen`, `topic-filter`, `examples-open`, `quiz-start`, `quiz-finish`, `about-open`, `link-click`, `home-screen-launch`. Tracking lives in `track()` in `js/app.js`.
+Anonymous, cookieless stats with [Umami Cloud](https://umami.is) (only counted on `dvplus.github.io`, not locally). Events: `spark-view`, `sparks-seen`, `topic-filter`, `examples-open`, `quiz-start`, `quiz-finish` (with `early` when ended before the last question), `missed-spark-open`, `about-open`, `link-click`, `home-screen-launch`. Tracking lives in `track()` in `js/app.js`.
 
 ## Deploy
 

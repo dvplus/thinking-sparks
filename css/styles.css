@@ -130,6 +130,15 @@ body.quizzing .nav { transform: translateY(140%); }
 .reveal p { margin: 0 0 6px; font-size: .9375rem; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
 .qactions { display: flex; gap: 10px; flex-wrap: wrap; }
 .score { margin: 0 0 12px; font-size: clamp(3.5rem, 18vw, 5rem); font-weight: 700; line-height: 1; letter-spacing: -0.04em; font-variation-settings: "opsz" 144; }
+.qask { margin: 0 0 10px; font-size: .9375rem; line-height: 1.4; font-weight: 600; color: var(--muted); }
+.qactions { align-items: center; }
+.linkbtn { min-height: 44px; padding: 0 4px; border: 0; background: none; color: var(--muted); font: inherit; font-size: .875rem; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(244, 244, 242, .35); transition: color .15s var(--ease); }
+.linkbtn:hover { color: var(--ink); }
+.missed { margin-top: 32px; }
+.missed ul { margin: 0; padding: 0; list-style: none; border-top: 1.5px solid rgba(244, 244, 242, .15); }
+.missedbtn { display: flex; align-items: center; gap: 0; width: 100%; min-height: 52px; padding: 12px 0; border: 0; border-bottom: 1.5px solid rgba(244, 244, 242, .15); background: none; color: var(--ink); font: inherit; font-size: 1rem; text-align: left; cursor: pointer; }
+.missedbtn .arrow { margin-left: auto; padding-left: 12px; color: var(--faint); transition: transform .2s var(--ease), color .15s var(--ease); }
+.missedbtn:hover .arrow { color: var(--ink); transform: translateX(3px); }
 
 /* About and credits */
 /* small visible circle, 44px hit area via ::after */

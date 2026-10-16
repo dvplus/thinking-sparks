@@ -286,7 +286,7 @@ function morphTo(c) {
 
 function openQuiz() {
   const here = list[idx] ? list[idx].cat : "listen";
-  quiz = { qs: makeQuestions(), i: 0, score: 0, from: here, to: here, mix: 1 };
+  quiz = { qs: makeQuestions(), i: 0, score: 0, answered: 0, missed: [], from: here, to: here, mix: 1 };
   track("quiz-start", { topic: cat });
   quizTarget = 1;
   document.body.classList.add("quizzing");
@@ -310,21 +310,25 @@ function showQuestion() {
   morphTo(q.s.cat);
   qprog.innerHTML = `<b>${quiz.i + 1}</b> / ${quiz.qs.length}`;
   qbody.innerHTML = "";
-  const prompt = el("p", "mark"); const d = el("span", "dot"); d.style.background = CATS[q.s.cat].color;
-  prompt.append(d, q.type === "try" ? "Which idea is behind this reply?" : "Which idea would improve this?");
+  // topic named in words, not just by colour
+  const topic = el("p", "mark"); const d = el("span", "dot"); d.style.background = CATS[q.s.cat].color;
+  topic.append(d, CATS[q.s.cat].label);
+  const ask = el("p", "qask", q.type === "try" ? "Which idea is behind this reply?" : "Which idea would improve this?");
   const opts = el("div", "opts");
   q.options.forEach(o => {
     const b = el("button", "btn opt", o.title);
     b.addEventListener("click", () => answer(q, o, b, opts));
     opts.append(b);
   });
-  qbody.append(prompt, el("p", "qtext" + (q.type === "instead" ? " dim" : ""), q.text), opts);
+  qbody.append(topic, ask, el("p", "qtext" + (q.type === "instead" ? " dim" : ""), q.text), opts);
   quizEl.scrollTop = 0;
 }
 
 function answer(q, choice, btn, opts) {
   const right = choice === q.s;
+  quiz.answered++;
   if (right) { quiz.score++; spinTarget += Math.PI / 2; glow = 1; }
+  else if (!quiz.missed.includes(q.s)) quiz.missed.push(q.s);
   [...opts.children].forEach((b, k) => {
     b.disabled = true;
     if (q.options[k] === q.s) { b.classList.add("right"); b.append(el("span", null, "✓")); }
@@ -338,14 +342,19 @@ function answer(q, choice, btn, opts) {
   const next = el("button", "btn solid", last ? "See your score" : "Next question");
   next.addEventListener("click", () => { quiz.i++; last ? showScore() : showQuestion(); });
   actions.append(next);
+  if (!last) {
+    const end = el("button", "linkbtn", "End quiz and see results");
+    end.addEventListener("click", () => showScore(true));
+    actions.append(end);
+  }
   qbody.append(rev, actions);
   quizEl.scrollTo({ top: quizEl.scrollHeight, behavior: reduce.matches ? "instant" : "smooth" });
   next.focus({ preventScroll: true });
 }
 
-function showScore() {
-  const n = quiz.score, total = quiz.qs.length;
-  track("quiz-finish", { topic: cat, score: n, total });
+function showScore(early) {
+  const n = quiz.score, total = quiz.answered;
+  track("quiz-finish", { topic: cat, score: n, total, early: !!early });
   spinTarget += Math.PI * (n / total) * 2;
   qprog.textContent = "";
   qbody.innerHTML = "";
@@ -354,13 +363,35 @@ function showScore() {
     : "Good start. Swipe through the sparks, then try again.";
   const actions = el("div", "qactions");
   const again = el("button", "btn solid", "Play again");
-  again.addEventListener("click", () => { quiz.qs = makeQuestions(); quiz.i = 0; quiz.score = 0; showQuestion(); });
+  again.addEventListener("click", () => { Object.assign(quiz, { qs: makeQuestions(), i: 0, score: 0, answered: 0, missed: [] }); showQuestion(); });
   const back = el("button", "btn", "Back to sparks");
   back.addEventListener("click", closeQuiz);
   actions.append(again, back);
   qbody.append(el("p", "mark", "Your score"), el("p", "score", `${n} of ${total}`), el("p", "desc", msg), actions);
-  msg && actions.style.setProperty("margin-top", "16px");
+  actions.style.setProperty("margin-top", "16px");
+  // sparks to revisit: tap one to jump straight to it
+  if (quiz.missed.length) {
+    const box = el("div", "missed");
+    box.append(el("p", "mark", "Worth another look"));
+    const ul = el("ul");
+    quiz.missed.forEach(sp => {
+      const b = el("button", "missedbtn");
+      const dot = el("span", "dot"); dot.style.background = CATS[sp.cat].color;
+      b.append(dot, el("span", null, sp.title), el("span", "arrow", "→"));
+      b.addEventListener("click", () => openMissed(sp));
+      const li = el("li"); li.append(b); ul.append(li);
+    });
+    box.append(ul);
+    qbody.append(box);
+  }
   again.focus({ preventScroll: true });
+}
+
+function openMissed(sp) {
+  track("missed-spark-open", { spark: sp.title, topic: sp.cat });
+  closeQuiz();
+  const n = list.indexOf(sp);
+  if (n >= 0) goTo(n);
 }
 
 $("quizBtn").addEventListener("click", openQuiz);
