@@ -57,7 +57,7 @@ body {
   font-variation-settings: "opsz" 144;
 }
 .desc { margin: 0 0 8px; font-size: 1rem; line-height: 1.5; color: var(--muted); max-width: 38ch; text-wrap: pretty; }
-.source { margin: 0 0 24px; font-size: .8125rem; line-height: 1.4; color: var(--faint); }
+.source { margin: 0; font-size: .8125rem; line-height: 1.4; color: var(--faint); }
 .actions { display: flex; gap: 10px; }
 
 .ex { border: 1.5px solid var(--line); border-radius: 28px; padding: 20px 20px 22px; }
@@ -67,8 +67,13 @@ body {
 .rule { height: 1.5px; background: var(--line); opacity: .15; margin: 16px 0 14px; border: 0; }
 
 .pager { display: flex; align-items: center; gap: 6px; padding: 16px 28px 0; }
-.pager span { width: 7px; height: 7px; border-radius: 99px; border: 1.5px solid var(--line); transition: width .45s var(--spring), background .2s var(--ease); }
-.pager span.on { width: 22px; background: var(--ink); }
+.pager .pdot { position: relative; flex: none; width: 7px; height: 7px; padding: 0; border-radius: 99px; border: 1.5px solid var(--line); background: transparent; cursor: pointer; transition: width .45s var(--spring), background .2s var(--ease); }
+.pager .pdot.on { width: 22px; background: var(--ink); }
+.pager .pdot::after { content: ""; position: absolute; inset: -18px -3px; } /* 43px tall tap area, no overlap */
+.page.ahead { cursor: pointer; }
+.slide.end { padding-bottom: 120px; }
+.endcard { padding: 0 28px; max-width: 536px; }
+.endcard .desc { margin-bottom: 24px; }
 .pager em { margin-left: 8px; font-style: normal; font-size: .75rem; color: var(--faint); transition: opacity .3s var(--ease); }
 
 /* Shared button language */
@@ -176,7 +181,7 @@ body.abouting .stage { opacity: 0; }
 @media (display-mode: standalone) { .ahome { display: none; } } /* already installed */
 
 @media (prefers-reduced-motion: reduce) {
-  .btn, .indicator, .tab, .feed, .hint, .pager span, .nav, .count, .quizbtn, .btn.infobtn { transition: none; }
+  .btn, .indicator, .tab, .feed, .hint, .pager .pdot, .nav, .count, .quizbtn, .btn.infobtn { transition: none; }
   .qbody > *, .abody > * { animation: none; }
   .stage { transition: none; }
 }

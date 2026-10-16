@@ -75,19 +75,15 @@ function build() {
 
     const main = el("div", "page");
     const mark = el("p", "mark"); const d = el("span", "dot"); d.style.background = color; mark.append(d, CATS[s.cat].label);
-    const actions = el("div", "actions");
-    const exBtn = el("button", "btn", "Examples");
-    exBtn.addEventListener("click", () => pageTo(h, 1));
-    const last = n === list.length - 1;
-    const nextBtn = el("button", "btn round", last ? "↑" : "↓");
-    nextBtn.setAttribute("aria-label", last ? "Back to first spark" : "Next spark");
-    nextBtn.addEventListener("click", () => goTo(last ? 0 : n + 1));
-    actions.append(exBtn, nextBtn);
-    main.append(mark, el("h2", "title", s.title), el("p", "desc", s.desc), el("p", "source", "Based on " + s.source), actions);
+    main.append(mark, el("h2", "title", s.title), el("p", "desc", s.desc), el("p", "source", "Based on " + s.source));
     h.append(main);
 
-    s.ex.forEach(([before, after]) => {
+    // no buttons: the next card peeks in and can be tapped, the dots below jump to any page
+    const pages = [main];
+    s.ex.forEach(([before, after], k) => {
       const page = el("div", "page");
+      page.addEventListener("click", () => { if (page.classList.contains("ahead")) pageTo(h, k + 1); });
+      pages.push(page);
       const card = el("div", "ex");
       const tryLbl = el("p", "lbl"); const d2 = el("span", "dot"); d2.style.background = color; tryLbl.append(d2, "Try");
       card.append(el("p", "lbl", "Instead of"), el("p", "q dim", before), el("hr", "rule"), tryLbl, el("p", "q", after));
@@ -96,13 +92,21 @@ function build() {
     });
 
     const pager = el("div", "pager");
-    const dots = [0, 1, 2].map(k => { const sp = el("span"); if (!k) sp.className = "on"; pager.append(sp); return sp; });
+    const dots = pages.map((_, k) => {
+      const b = el("button", "pdot" + (k ? "" : " on"));
+      b.setAttribute("aria-label", k ? `Example ${k}` : "The idea");
+      b.addEventListener("click", () => pageTo(h, k));
+      pager.append(b); return b;
+    });
+    const markAhead = p => pages.forEach((pg, k) => pg.classList.toggle("ahead", k > p));
+    markAhead(0);
     const swipeHint = el("em", null, "Swipe for examples");
     pager.append(swipeHint);
     let sawExamples = false;
     h.addEventListener("scroll", () => {
       const p = Math.round(h.scrollLeft / pageWidth(h));
-      dots.forEach((dt, k) => dt.classList.toggle("on", k === p));
+      dots.forEach((dt, k) => { dt.classList.toggle("on", k === p); dt.setAttribute("aria-current", k === p); });
+      markAhead(p);
       swipeHint.style.opacity = p ? 0 : 1;
       if (p && !sawExamples) { sawExamples = true; track("examples-open", { spark: s.title, topic: s.cat }); }
     }, { passive: true });
@@ -111,6 +115,24 @@ function build() {
     feed.appendChild(slide);
     return { h, parts: [...main.children, pager] };
   });
+
+  // a proper ending instead of a "back to top" arrow
+  const end = el("section", "slide end");
+  const box = el("div", "endcard");
+  const dots = el("p", "adots"); dots.setAttribute("aria-hidden", "true");
+  Object.values(CATS).forEach(c => { const d = el("span"); d.style.background = c.color; dots.append(d); });
+  const n = list.length;
+  const actions = el("div", "qactions");
+  const quizGo = el("button", "btn solid", "Take the quiz");
+  quizGo.addEventListener("click", () => { track("end-card", { action: "quiz" }); openQuiz(); });
+  const again = el("button", "btn", "Start over");
+  again.addEventListener("click", () => { track("end-card", { action: "start-over" }); goTo(0); });
+  actions.append(quizGo, again);
+  box.append(dots, el("h2", "title", cat === "all" ? `You’ve seen all ${n}.` : `That’s all ${n} ${CATS[cat].tab} sparks.`),
+    el("p", "desc", "Test what stuck, or go round again."), actions);
+  end.append(box);
+  feed.appendChild(end);
+  slides.push({ h: null, parts: [...box.children] });
   placeIndicator();
 }
 
@@ -457,10 +479,11 @@ addEventListener("resize", () => { placeIndicator(); sizeCanvas(); goTo(idx, tru
 document.addEventListener("keydown", e => {
   if (aboutEl && !aboutEl.hidden) { if (e.key === "Escape") closeAbout(); return; }
   if (quiz) { if (e.key === "Escape") closeQuiz(); return; }
-  const s = slides[idx];
-  if (["ArrowDown", "PageDown", " "].includes(e.key)) { e.preventDefault(); goTo(Math.min(idx + 1, list.length - 1)); }
-  if (["ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); goTo(Math.max(idx - 1, 0)); }
-  if (s && e.key === "ArrowRight") { e.preventDefault(); pageTo(s.h, Math.min(Math.round(s.h.scrollLeft / pageWidth(s.h)) + 1, 2)); }
+  const at = Math.round(feed.scrollTop / (feed.clientHeight || 1));  // includes the end card
+  const s = slides[at] && slides[at].h ? slides[at] : null;
+  if (["ArrowDown", "PageDown", " "].includes(e.key) && e.target === document.body) { e.preventDefault(); goTo(Math.min(at + 1, slides.length - 1)); }
+  if (["ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); goTo(Math.max(at - 1, 0)); }
+  if (s && e.key === "ArrowRight") { e.preventDefault(); pageTo(s.h, Math.min(Math.round(s.h.scrollLeft / pageWidth(s.h)) + 1, s.h.children.length - 1)); }
   if (s && e.key === "ArrowLeft") { e.preventDefault(); pageTo(s.h, Math.max(Math.round(s.h.scrollLeft / pageWidth(s.h)) - 1, 0)); }
 });
 
