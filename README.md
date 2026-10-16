@@ -19,12 +19,16 @@ Open `index.html` in a browser, or serve the folder:
 python3 -m http.server 8000
 ```
 
+## Agent skill
+
+`.claude/skills/make-interfaces-feel-better/` is an interface-polish skill (from [dvplus/make-interfaces-feel-better](https://github.com/dvplus/make-interfaces-feel-better), MIT, by Jakub Krehel). Claude Code picks it up automatically when working in this folder.
+
 ## Deploy
 
 Published with GitHub Pages from the `main` branch root.
 
 ## Credits
 
-Made by Diogo · [diogovalerio.com](https://diogovalerio.com/) · [LinkedIn](https://www.linkedin.com/in/diogovalerio/)
+Made by Diogo Valério · [diogovalerio.com](https://diogovalerio.com/) · [LinkedIn](https://www.linkedin.com/in/diogovalerio/)
 
 Each spark credits the research it's based on.
