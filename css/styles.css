@@ -58,8 +58,9 @@ body {
 }
 .desc { margin: 0 0 8px; font-size: 1rem; line-height: 1.5; color: var(--muted); max-width: 38ch; text-wrap: pretty; }
 .source { margin: 0; font-size: .8125rem; line-height: 1.4; color: var(--faint); }
-/* optical: lift the example cards so their bottom edge meets the idea's last baseline (no overflow, nothing to drag) */
-.hscroll .page + .page { margin-bottom: 5px; }
+/* text-to-text: the idea's last line shares a baseline with the example's last line
+   (card text baseline sits ~29.6px above the card edge; source baseline ~5.2px above its box) */
+.hscroll .page:first-child { padding-bottom: 24.5px; }
 .actions { display: flex; gap: 10px; }
 
 .ex { border: 1.5px solid var(--line); border-radius: 28px; padding: 20px 20px 22px; }
