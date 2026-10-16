@@ -27,6 +27,8 @@ python3 -m http.server 8000
 
 Published with GitHub Pages from the `main` branch root.
 
+When you change CSS or JS, bump the `?v=` number on the links in `index.html` so browsers don't mix cached old files with new ones.
+
 ## Credits
 
 Made by Diogo Valério · [diogovalerio.com](https://diogovalerio.com/) · [LinkedIn](https://www.linkedin.com/in/diogovalerio/)

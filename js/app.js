@@ -360,8 +360,11 @@ function closeAbout() {
   aboutEl.hidden = true;
   $("aboutBtn").focus({ preventScroll: true });
 }
-$("aboutBtn").addEventListener("click", openAbout);
-$("aboutClose").addEventListener("click", closeAbout);
+// guarded so a stale cached index.html without the About markup can't stop the sparks from loading
+if (aboutEl) {
+  $("aboutBtn").addEventListener("click", openAbout);
+  $("aboutClose").addEventListener("click", closeAbout);
+}
 
 /* Scroll-linked text motion */
 let ticking = false;
@@ -393,7 +396,7 @@ feed.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestA
 addEventListener("resize", () => { placeIndicator(); sizeCanvas(); goTo(idx, true); update(); });
 
 document.addEventListener("keydown", e => {
-  if (!aboutEl.hidden) { if (e.key === "Escape") closeAbout(); return; }
+  if (aboutEl && !aboutEl.hidden) { if (e.key === "Escape") closeAbout(); return; }
   if (quiz) { if (e.key === "Escape") closeQuiz(); return; }
   const s = slides[idx];
   if (["ArrowDown", "PageDown", " "].includes(e.key)) { e.preventDefault(); goTo(Math.min(idx + 1, list.length - 1)); }
